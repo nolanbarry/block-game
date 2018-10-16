@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2026
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "block-game", "block-game\block-game.csproj", "{8FF86D7B-7096-46A6-8696-2F1504FC998E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "block-game", "WindowsFormsApp1\block-game.csproj", "{26736A6D-29FA-4702-B46F-6E083889344F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8FF86D7B-7096-46A6-8696-2F1504FC998E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8FF86D7B-7096-46A6-8696-2F1504FC998E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8FF86D7B-7096-46A6-8696-2F1504FC998E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8FF86D7B-7096-46A6-8696-2F1504FC998E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26736A6D-29FA-4702-B46F-6E083889344F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26736A6D-29FA-4702-B46F-6E083889344F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26736A6D-29FA-4702-B46F-6E083889344F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26736A6D-29FA-4702-B46F-6E083889344F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
