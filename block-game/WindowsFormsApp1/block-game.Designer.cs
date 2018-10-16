@@ -1,6 +1,6 @@
 ﻿namespace WindowsFormsApp1
 {
-    partial class Form1
+    partial class blockUI
     {
         /// <summary>
         /// Required designer variable.
@@ -36,7 +36,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1124, 901);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "its like tetris but technically not";
             this.ResumeLayout(false);
 
         }
