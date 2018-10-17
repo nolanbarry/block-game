@@ -14,13 +14,14 @@ namespace WindowsFormsApp1
     {
         private Timer ticker;
         private int ticks;
+        private Point center { get { return new Point(ClientRectangle.Size.Width / 2, ClientRectangle.Size.Height / 2); } }
 
         private Size gridSize = new Size(10, 10);
         public blockUI()
         {
             InitializeComponent();
             this.BackColor = ColorTranslator.FromHtml("#101010");
-            this.Size = new Size(750, 750);
+            this.Size = new Size(500, 800);
 
             // TIMER
             ticker = new Timer();
@@ -36,19 +37,56 @@ namespace WindowsFormsApp1
         private void onPaint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
-            drawGrid(g, gridSize, new Size(600, 600), new Point(ClientRectangle.Size.Width/2, ClientRectangle.Size.Height/2), Color.AntiqueWhite);
+            draw(g);
         }
 
-        private void drawGrid(Graphics g, Size gridSize, Size bounds, Point center, Color borderColor)
+        private void draw(Graphics g)
+        {
+            // distribute space out
+            double[] spaceAllocation = new double[] { 0.2, 0.6, 0.2 };
+            int infoBarHeight = (int)(spaceAllocation[0] * ClientRectangle.Height);
+            int gridHeight = (int)(spaceAllocation[1] * ClientRectangle.Height);
+            int interactBarHeight = (int)(spaceAllocation[2] * ClientRectangle.Height);
+
+            // creating images to compartmentalize different areas of the form. 
+            int w = ClientRectangle.Width;
+            Bitmap imgInfoBar = assembleInfoBar(new Bitmap(w, infoBarHeight));
+            Bitmap imgGrid = assemgleGrid(new Bitmap(w, gridHeight));
+            Bitmap imgInteractBar = assembleInteractBar(new Bitmap(w, interactBarHeight));
+
+            // info bar
+            
+            // grid
+            Size gridBounds = new Size((int) (ClientRectangle.Width * 0.9), (int) (ClientRectangle.Width * 0.9));
+            drawGrid(g, gridBounds, center, ColorTranslator.FromHtml("#232323"));
+        }
+
+        private Bitmap assembleInfoBar(Bitmap img)
+        {
+            return null;
+        }
+
+        private Bitmap assembleGrid(Bitmap img)
+        {
+            return null;
+        }
+
+        private Bitmap assembleInteractBar(Bitmap img)
+        {
+            return null;
+        }
+
+        private void drawGrid(Graphics g, Size gridSize, Size bounds, Point anchorPoint, Color borderColor)
         {
             Pen pen = new Pen(borderColor);
-            pen.Width = 10;
-            double xInterval = (double) bounds.Width / gridSize.Width; // the distance between lines in the grid
-            double yInterval = (double) bounds.Height / gridSize.Height;
-            Point anchorPoint = new Point { X = center.X - bounds.Width / 2, Y = center.Y - bounds.Height / 2 }; // top left point
+            pen.Width = 5;
+            pen.EndCap = System.Drawing.Drawing2D.LineCap.Round;
+            pen.StartCap = System.Drawing.Drawing2D.LineCap.Round;
+            double xInterval = (double)bounds.Width / gridSize.Width; // the distance between lines in the grid
+            double yInterval = (double)bounds.Height / gridSize.Height;
 
             // draws horizontal lines first
-            for(int i = 0; i < gridSize.Height + 1; i++)
+            for (int i = 0; i < gridSize.Height + 1; i++)
             {
                 int y = anchorPoint.Y + (int)(yInterval * i);
                 Point p1 = new Point(anchorPoint.X, y);
@@ -59,7 +97,7 @@ namespace WindowsFormsApp1
 
             // then vertical lines
             // an additional line is added so that the grid has a right and bottom border
-            for(int i = 0; i < gridSize.Width + 1; i++)
+            for (int i = 0; i < gridSize.Width + 1; i++)
             {
                 int x = anchorPoint.X + (int)(xInterval * i);
                 Point p1 = new Point(x, anchorPoint.Y);
@@ -67,12 +105,17 @@ namespace WindowsFormsApp1
 
                 g.DrawLine(pen, p1, p2);
             }
+        }
+        private void drawGrid(Graphics g, Size bounds, Point center, Color borderColor)
+        {
+            drawGrid(g, gridSize, bounds, new Point { X = center.X - bounds.Width / 2, Y = center.Y - bounds.Height / 2 }, borderColor);
 
         }
 
         private void tick(object sender, EventArgs e)
         {
             ticks++;
+            lblTest.Text = PointToClient(MousePosition).ToString() + " " + ClientRectangle.Size.ToString();
             Refresh();
         }
     }
