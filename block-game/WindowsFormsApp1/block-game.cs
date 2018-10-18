@@ -14,14 +14,20 @@ namespace WindowsFormsApp1
     {
         private Timer ticker;
         private int ticks;
-        private Point center { get { return new Point(ClientRectangle.Size.Width / 2, ClientRectangle.Size.Height / 2); } }
 
+        private Point center { get { return new Point(ClientRectangle.Size.Width / 2, ClientRectangle.Size.Height / 2); } }
+        private double windowRatio = 5.0 / 8.0;
+
+        /// <summary>
+        /// Number of squares in x and y axis
+        /// </summary>
         private Size gridSize = new Size(10, 10);
+
         public blockUI()
         {
             InitializeComponent();
             this.BackColor = ColorTranslator.FromHtml("#101010");
-            this.Size = new Size(500, 800);
+            this.Size = new Size((int) (800 * windowRatio), 800);
 
             // TIMER
             ticker = new Timer();
@@ -37,43 +43,66 @@ namespace WindowsFormsApp1
         private void onPaint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
             draw(g);
         }
 
         private void draw(Graphics g)
         {
             // distribute space out
-            double[] spaceAllocation = new double[] { 0.2, 0.6, 0.2 };
-            int infoBarHeight = (int)(spaceAllocation[0] * ClientRectangle.Height);
-            int gridHeight = (int)(spaceAllocation[1] * ClientRectangle.Height);
-            int interactBarHeight = (int)(spaceAllocation[2] * ClientRectangle.Height);
+            int renderResolution = 2000; // draw everything as if this was the window height (of a 8:5 ratio screen), then scale down appropriately
+            double[] spaceAllocation = new double[] { 0.15, 0.6, 0.25 };
+            int infoBarHeight = (int)(spaceAllocation[0] * renderResolution);
+            int gridHeight = (int)(spaceAllocation[1] * renderResolution);
+            int interactBarHeight = (int)(spaceAllocation[2] * renderResolution);
 
             // creating images to compartmentalize different areas of the form. 
-            int w = ClientRectangle.Width;
+            int w = (int)(renderResolution * windowRatio);
             Bitmap imgInfoBar = assembleInfoBar(new Bitmap(w, infoBarHeight));
-            Bitmap imgGrid = assemgleGrid(new Bitmap(w, gridHeight));
+            Bitmap imgGrid = assembleGrid(new Bitmap(w, gridHeight));
             Bitmap imgInteractBar = assembleInteractBar(new Bitmap(w, interactBarHeight));
 
-            // info bar
-            
-            // grid
-            Size gridBounds = new Size((int) (ClientRectangle.Width * 0.9), (int) (ClientRectangle.Width * 0.9));
-            drawGrid(g, gridBounds, center, ColorTranslator.FromHtml("#232323"));
+            // draw everything to the form
+            Point p = new Point(0, 0);
+            Size s = new Size(ClientRectangle.Width, (int)(ClientRectangle.Height * spaceAllocation[0]));
+            Rectangle r = new Rectangle(p, s);
+            g.DrawImage(imgInfoBar, r);
+
+            p.Y = (int)(ClientRectangle.Height * spaceAllocation[0]) + 1;
+            s.Height = (int)(ClientRectangle.Height * spaceAllocation[1]);
+            r = new Rectangle(p, s);
+            g.DrawImage(imgGrid, r);
+
+            p.Y = (int)(ClientRectangle.Height * (spaceAllocation[0] + spaceAllocation[1])) + 1;
+            s.Height = (int)(ClientRectangle.Height * spaceAllocation[2]);
+            r = new Rectangle(p, s);
+            g.DrawImage(imgInteractBar, r);
+
         }
 
         private Bitmap assembleInfoBar(Bitmap img)
         {
-            return null;
+            Graphics g = Graphics.FromImage(img);
+            return img;
         }
 
         private Bitmap assembleGrid(Bitmap img)
         {
-            return null;
+            Graphics g = Graphics.FromImage(img);
+            int h;
+            if (img.Width > img.Height)
+                h = img.Height;
+            else
+                h = img.Width;
+
+            Size gridBounds = new Size((int)(h * 0.9), (int)(h * 0.9));
+            drawGrid(g, gridBounds, new Point(img.Width / 2, img.Height / 2), ColorTranslator.FromHtml("#232323"));
+            return img;
         }
 
         private Bitmap assembleInteractBar(Bitmap img)
         {
-            return null;
+            return img;
         }
 
         private void drawGrid(Graphics g, Size gridSize, Size bounds, Point anchorPoint, Color borderColor)
