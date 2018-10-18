@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2026
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "block-game", "WindowsFormsApp1\block-game.csproj", "{26736A6D-29FA-4702-B46F-6E083889344F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "block-game", "block-game\block-game.csproj", "{26736A6D-29FA-4702-B46F-6E083889344F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
