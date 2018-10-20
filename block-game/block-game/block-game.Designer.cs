@@ -1,4 +1,4 @@
-﻿namespace WindowsFormsApp1
+﻿namespace blockgame
 {
     partial class blockUI
     {

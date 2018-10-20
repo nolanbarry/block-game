@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace WindowsFormsApp1
+namespace blockgame
 {
     public partial class blockUI : Form
     {
@@ -45,6 +45,7 @@ namespace WindowsFormsApp1
             Graphics g = e.Graphics;
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
             draw(g);
+            g.DrawImage(new BlockGroup().draw(40), center);
         }
 
         private void draw(Graphics g)
