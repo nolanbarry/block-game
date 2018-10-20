@@ -45,13 +45,13 @@ namespace blockgame
             Graphics g = e.Graphics;
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
             draw(g);
-            g.DrawImage(new BlockGroup().draw(40), center);
         }
 
+        private int renderResolution; // draw everything as if this was the window height (of a 8:5 ratio screen), then scale down appropriately
         private void draw(Graphics g)
         {
             // distribute space out
-            int renderResolution = 2000; // draw everything as if this was the window height (of a 8:5 ratio screen), then scale down appropriately
+            renderResolution = Height;
             double[] spaceAllocation = new double[] { 0.15, 0.6, 0.25 };
             int infoBarHeight = (int)(spaceAllocation[0] * renderResolution);
             int gridHeight = (int)(spaceAllocation[1] * renderResolution);
@@ -98,6 +98,14 @@ namespace blockgame
 
             Size gridBounds = new Size((int)(h * 0.9), (int)(h * 0.9));
             drawGrid(g, gridBounds, new Point(img.Width / 2, img.Height / 2), ColorTranslator.FromHtml("#232323"));
+            Point corner = new Point()
+            {
+                X = img.Width / 2 - gridBounds.Width / 2,
+                Y = img.Height / 2 - gridBounds.Height / 2
+            };
+            int interval = gridBounds.Width / gridSize.Width;
+            int margin = (int)(0.0075 * renderResolution);
+            g.DrawImage(new BlockGroup().draw(interval - margin, interval), corner);
             return img;
         }
 
@@ -109,31 +117,19 @@ namespace blockgame
         private void drawGrid(Graphics g, Size gridSize, Size bounds, Point anchorPoint, Color borderColor)
         {
             Pen pen = new Pen(borderColor);
-            pen.Width = 5;
+            pen.Width = 3;
             pen.EndCap = System.Drawing.Drawing2D.LineCap.Round;
             pen.StartCap = System.Drawing.Drawing2D.LineCap.Round;
-            double xInterval = (double)bounds.Width / gridSize.Width; // the distance between lines in the grid
-            double yInterval = (double)bounds.Height / gridSize.Height;
+            int xInterval = bounds.Width / gridSize.Width; // the distance between lines in the grid
+            int yInterval = bounds.Height / gridSize.Height;
 
-            // draws horizontal lines first
-            for (int i = 0; i < gridSize.Height + 1; i++)
+            for(int i = 0; i < gridSize.Height; i++)
             {
-                int y = anchorPoint.Y + (int)(yInterval * i);
-                Point p1 = new Point(anchorPoint.X, y);
-                Point p2 = new Point(anchorPoint.X + bounds.Width, y);
-
-                g.DrawLine(pen, p1, p2);
-            }
-
-            // then vertical lines
-            // an additional line is added so that the grid has a right and bottom border
-            for (int i = 0; i < gridSize.Width + 1; i++)
-            {
-                int x = anchorPoint.X + (int)(xInterval * i);
-                Point p1 = new Point(x, anchorPoint.Y);
-                Point p2 = new Point(x, anchorPoint.Y + bounds.Height);
-
-                g.DrawLine(pen, p1, p2);
+                for(int j = 0; j < gridSize.Width; j++)
+                {
+                    Point cellAnchor = new Point(anchorPoint.X + i * xInterval, anchorPoint.Y + j * yInterval);
+                    g.DrawImage(BlockGroup.getBlock(7, xInterval - (int)(0.0075 * renderResolution)), cellAnchor);
+                }
             }
         }
         private void drawGrid(Graphics g, Size bounds, Point center, Color borderColor)

@@ -46,23 +46,23 @@ namespace blockgame
         public BlockGroup()
         {
             group = groups[r.Next(groups.Length)];
-            group = groups[1];
+            group = groups[4];
         }
 
-        public Image draw(int squareLength)
+        public Image draw(int squareLength, int interval)
         {
-            Bitmap img = new Bitmap(xBounds * squareLength, yBounds * squareLength);
+            Bitmap img = new Bitmap(xBounds * interval, (yBounds + 2) * interval);
             Graphics g = Graphics.FromImage(img);
-            g.SmoothingMode = SmoothingMode.AntiAlias;
-            Bitmap block = getBlock(0, squareLength - 1);
+            g.SmoothingMode = SmoothingMode.HighQuality;
+            Bitmap block = getBlock(4, squareLength);
             foreach (Point p in group)
             {
-                g.DrawImage(block, new Point(p.X * squareLength, p.Y * squareLength));
+                g.DrawImage(block, new Point(p.X * interval + ((interval - squareLength) / 2) -2, -2 + p.Y * interval + ((interval - squareLength) / 2)));
             }
             return img;
         }
 
-        float[][] colorOptions = new float[][]
+        static float[][] colorOptions = new float[][]
         {
             new float[] {255, 151, 115}, // #ff9773
             new float[] {186, 218, 85}, // #bada55
@@ -70,10 +70,11 @@ namespace blockgame
             new float[] {255, 215, 0}, // #ffd700
             new float[] {98, 128, 164}, // #6280a4
             new float[] {254, 17, 122}, // #fe117a
-            new float[] {255, 204, 204} // #ffcccc
+            new float[] {255, 204, 204}, // #ffcccc
+            new float[] {30, 30, 30} // gray, for the grid
         };
 
-        private Bitmap getBlock(int colorNum, int width)
+        public static Bitmap getBlock(int colorNum, int width)
         {
             Bitmap block = imaging.resizeImage(Image.FromFile("assets\\images\\block.png"), width, width);
             float[] color = colorOptions[colorNum];
@@ -114,8 +115,8 @@ namespace blockgame
             {
                 new Point(0, 0), //  
                 new Point(1, 0), // X X
-                new Point(0, 2), // X
-                new Point(0, 3)  // X
+                new Point(0, 1), // X
+                new Point(0, 2)  // X
             },
             new Point[]
             {
