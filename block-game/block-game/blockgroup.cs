@@ -43,6 +43,7 @@ namespace blockgame
                 return max + 1;
             }
         }
+        private Bitmap me;
         public BlockGroup()
         {
             group = groups[r.Next(groups.Length)];
@@ -51,18 +52,26 @@ namespace blockgame
 
         public Image draw(int squareLength, int interval)
         {
-            Bitmap img = new Bitmap(xBounds * interval, (yBounds + 2) * interval);
-            Graphics g = Graphics.FromImage(img);
-            g.SmoothingMode = SmoothingMode.HighQuality;
-            Bitmap block = getBlock(4, squareLength);
-            foreach (Point p in group)
+            if (me == null)
             {
-                g.DrawImage(block, new Point(p.X * interval + ((interval - squareLength) / 2) -2, -2 + p.Y * interval + ((interval - squareLength) / 2)));
+                Bitmap img = new Bitmap(xBounds * interval, (yBounds + 2) * interval);
+                Graphics g = Graphics.FromImage(img);
+                g.SmoothingMode = SmoothingMode.HighQuality;
+                Bitmap block = getBlock(4, squareLength);
+                foreach (Point p in group)
+                {
+                    g.DrawImage(block, new Point(p.X * interval + ((interval - squareLength) / 2) - 2, -2 + p.Y * interval + ((interval - squareLength) / 2)));
+                }
+                me = img;
+                return img;
+            } else
+            {
+                return me;
             }
-            return img;
+
         }
 
-        static float[][] colorOptions = new float[][]
+        static readonly float[][] colorOptions = new float[][]
         {
             new float[] {255, 151, 115}, // #ff9773
             new float[] {186, 218, 85}, // #bada55
@@ -76,7 +85,7 @@ namespace blockgame
 
         public static Bitmap getBlock(int colorNum, int width)
         {
-            Bitmap block = imaging.resizeImage(Image.FromFile("assets\\images\\block.png"), width, width);
+            Bitmap block = imaging.resizeImage(blockUI.block, width, width);
             float[] color = colorOptions[colorNum];
             block = imaging.recolorImage(block, color[0] / 255f, color[1] / 255f, color[2] / 255f);
             return block;

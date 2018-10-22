@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Drawing.Imaging;
 
 namespace blockgame
 {
@@ -17,6 +18,9 @@ namespace blockgame
 
         private Point center { get { return new Point(ClientRectangle.Size.Width / 2, ClientRectangle.Size.Height / 2); } }
         private double windowRatio = 5.0 / 8.0;
+
+        private Stage stage;
+        public static Image block { get; } = Image.FromFile("assets\\images\\block.png");
 
         /// <summary>
         /// Number of squares in x and y axis
@@ -38,6 +42,8 @@ namespace blockgame
             // PAINT
             this.Paint += new PaintEventHandler(onPaint);
             DoubleBuffered = true;
+
+            stage = new Stage(gridSize);
         }
 
         private void onPaint(object sender, PaintEventArgs e)
@@ -89,7 +95,6 @@ namespace blockgame
 
         private Bitmap assembleGrid(Bitmap img)
         {
-            Graphics g = Graphics.FromImage(img);
             int h;
             if (img.Width > img.Height)
                 h = img.Height;
@@ -97,7 +102,7 @@ namespace blockgame
                 h = img.Width;
 
             Size gridBounds = new Size((int)(h * 0.9), (int)(h * 0.9));
-            drawGrid(g, gridBounds, new Point(img.Width / 2, img.Height / 2), ColorTranslator.FromHtml("#232323"));
+            img = stage.drawGrid(img.Size, gridBounds, new Point(img.Width / 2, img.Height / 2), ColorTranslator.FromHtml("#232323"), (int)(0.0075 * renderResolution));
             Point corner = new Point()
             {
                 X = img.Width / 2 - gridBounds.Width / 2,
@@ -105,37 +110,16 @@ namespace blockgame
             };
             int interval = gridBounds.Width / gridSize.Width;
             int margin = (int)(0.0075 * renderResolution);
+
+            Graphics g = Graphics.FromImage(img);
             g.DrawImage(new BlockGroup().draw(interval - margin, interval), corner);
+
             return img;
         }
 
         private Bitmap assembleInteractBar(Bitmap img)
         {
             return img;
-        }
-
-        private void drawGrid(Graphics g, Size gridSize, Size bounds, Point anchorPoint, Color borderColor)
-        {
-            Pen pen = new Pen(borderColor);
-            pen.Width = 3;
-            pen.EndCap = System.Drawing.Drawing2D.LineCap.Round;
-            pen.StartCap = System.Drawing.Drawing2D.LineCap.Round;
-            int xInterval = bounds.Width / gridSize.Width; // the distance between lines in the grid
-            int yInterval = bounds.Height / gridSize.Height;
-
-            for(int i = 0; i < gridSize.Height; i++)
-            {
-                for(int j = 0; j < gridSize.Width; j++)
-                {
-                    Point cellAnchor = new Point(anchorPoint.X + i * xInterval, anchorPoint.Y + j * yInterval);
-                    g.DrawImage(BlockGroup.getBlock(7, xInterval - (int)(0.0075 * renderResolution)), cellAnchor);
-                }
-            }
-        }
-        private void drawGrid(Graphics g, Size bounds, Point center, Color borderColor)
-        {
-            drawGrid(g, gridSize, bounds, new Point { X = center.X - bounds.Width / 2, Y = center.Y - bounds.Height / 2 }, borderColor);
-
         }
 
         private void tick(object sender, EventArgs e)
