@@ -9,10 +9,12 @@ using System.Drawing.Imaging;
 
 namespace blockgame
 {
-    public class BlockGroup
+    public class Shape
     {
         public static Random r = new Random();
-        public Point[] group;
+
+        public Point[] group { get; private set; }
+        public int color { get; private set; }
         public int xBounds
         {
             get
@@ -43,13 +45,22 @@ namespace blockgame
                 return max + 1;
             }
         }
+        public Point groupAnchor;
         private Bitmap me;
-        public BlockGroup()
+
+        public Shape(Point anchor)
         {
-            group = groups[r.Next(groups.Length)];
-            group = groups[4];
+            color = r.Next(colorOptions.Length);
+            group = shapes[color];
+            groupAnchor = anchor;
         }
 
+        /// <summary>
+        /// Returns an image of the assembled shape
+        /// </summary>
+        /// <param name="squareLength">The width/height of each square</param>
+        /// <param name="interval">The distance between squares (different from squareLength to make room for a margin)</param>
+        /// <returns></returns>
         public Image draw(int squareLength, int interval)
         {
             if (me == null)
@@ -57,7 +68,7 @@ namespace blockgame
                 Bitmap img = new Bitmap(xBounds * interval, (yBounds + 2) * interval);
                 Graphics g = Graphics.FromImage(img);
                 g.SmoothingMode = SmoothingMode.HighQuality;
-                Bitmap block = getBlock(4, squareLength);
+                Bitmap block = getBlock(color, squareLength);
                 foreach (Point p in group)
                 {
                     g.DrawImage(block, new Point(p.X * interval + ((interval - squareLength) / 2) - 2, -2 + p.Y * interval + ((interval - squareLength) / 2)));
@@ -71,7 +82,7 @@ namespace blockgame
 
         }
 
-        static readonly float[][] colorOptions = new float[][]
+        static readonly float[][] colorOptions = new float[][] // length must be at least as long as the number of shape types
         {
             new float[] {255, 151, 115}, // #ff9773
             new float[] {186, 218, 85}, // #bada55
@@ -92,7 +103,7 @@ namespace blockgame
         }
 
         #region block groups
-        public static Point[][] groups = new Point[][]
+        public static Point[][] shapes = new Point[][]
         {
             new Point[]
             {

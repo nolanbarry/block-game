@@ -25,7 +25,7 @@ namespace blockgame
         /// <summary>
         /// Number of squares in x and y axis
         /// </summary>
-        private Size gridSize = new Size(10, 10);
+        private int gridSize = 10;
 
         public blockUI()
         {
@@ -50,7 +50,7 @@ namespace blockgame
         {
             Graphics g = e.Graphics;
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-            draw(g);
+            if (ticks > 1) draw(g);
         }
 
         private int renderResolution; // draw everything as if this was the window height (of a 8:5 ratio screen), then scale down appropriately
@@ -102,17 +102,8 @@ namespace blockgame
                 h = img.Width;
 
             Size gridBounds = new Size((int)(h * 0.9), (int)(h * 0.9));
-            img = stage.drawGrid(img.Size, gridBounds, new Point(img.Width / 2, img.Height / 2), ColorTranslator.FromHtml("#232323"), (int)(0.0075 * renderResolution));
-            Point corner = new Point()
-            {
-                X = img.Width / 2 - gridBounds.Width / 2,
-                Y = img.Height / 2 - gridBounds.Height / 2
-            };
-            int interval = gridBounds.Width / gridSize.Width;
             int margin = (int)(0.0075 * renderResolution);
-
-            Graphics g = Graphics.FromImage(img);
-            g.DrawImage(new BlockGroup().draw(interval - margin, interval), corner);
+            img = stage.assembleGridTo(img, gridBounds, margin);
 
             return img;
         }

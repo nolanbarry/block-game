@@ -11,35 +11,56 @@ namespace blockgame
 {
     public class Stage
     {
-        public int width { get; private set; }
-        public int height { get; private set; }
+        public int dimension { get; private set; } // number of columns
         public Bitmap cache; // stores the grid image so that it does not have to be redrawn every frame
+        public List<Shape> shapes;
 
-        public Stage(Size s)
+        public Stage(int dimension)
         {
-            width = s.Width;
-            height = s.Height;
+            this.dimension = dimension;
+            shapes = new List<Shape>();
+            for(int i = 0; i < 4; i++)
+            {
+                shapes.Add(new Shape(new Point(Shape.r.Next(7), Shape.r.Next(7))));
+            }
         }
 
-        public Bitmap drawGrid(Size drawArea, Size bounds, Color borderColor, int margin, Point anchorPoint)
+        #region rendering methods/overloads
+        public Bitmap assembleGridTo(Bitmap img, Size gridBounds, int margin)
+        {
+            Point corner = new Point()
+            {
+                X = img.Width / 2 - gridBounds.Width / 2,
+                Y = img.Height / 2 - gridBounds.Height / 2
+            };
+            int interval = gridBounds.Width / dimension;
+
+            img = drawGrid(img.Size, gridBounds, new Point(img.Width / 2, img.Height / 2), margin);
+
+            Graphics g = Graphics.FromImage(img);
+            foreach (Shape s in shapes)
+            {
+                int x = corner.X + (s.groupAnchor.X * interval);
+                int y = corner.Y + (s.groupAnchor.Y * interval);
+                g.DrawImage(s.draw(interval - margin, interval), x, y);
+            }
+            return img;
+        }
+        public Bitmap drawGrid(Size drawArea, Size bounds, int margin, Point anchorPoint)
         {
             if (cache == null)
             {
                 Bitmap img = new Bitmap(drawArea.Width, drawArea.Height);
                 Graphics g = Graphics.FromImage(img);
-                Pen pen = new Pen(borderColor);
-                pen.Width = 3;
-                pen.EndCap = LineCap.Round;
-                pen.StartCap = LineCap.Round;
-                int xInterval = bounds.Width / width; // the distance between lines in the grid
-                int yInterval = bounds.Height / height;
+                int xInterval = bounds.Width / dimension; // the distance between lines in the grid
+                int yInterval = bounds.Height / dimension;
 
-                for (int i = 0; i < height; i++)
+                for (int i = 0; i < dimension; i++)
                 {
-                    for (int j = 0; j < width; j++)
+                    for (int j = 0; j < dimension; j++)
                     {
                         Point cellAnchor = new Point(anchorPoint.X + i * xInterval, anchorPoint.Y + j * yInterval);
-                        g.DrawImage(BlockGroup.getBlock(7, xInterval - margin), cellAnchor);
+                        g.DrawImage(Shape.getBlock(7, xInterval - margin), cellAnchor);
                     }
                 }
                 cache = img;
@@ -48,10 +69,11 @@ namespace blockgame
             else return cache;
         }
 
-        public Bitmap drawGrid(Size drawArea, Size bounds, Point center, Color borderColor, int margin)
+        public Bitmap drawGrid(Size drawArea, Size bounds, Point center, int margin)
         {
-            return drawGrid(drawArea, bounds, borderColor, margin, new Point { X = center.X - bounds.Width / 2, Y = center.Y - bounds.Height / 2 });
+            return drawGrid(drawArea, bounds, margin, new Point { X = center.X - bounds.Width / 2, Y = center.Y - bounds.Height / 2 });
 
         }
+        #endregion
     }
 }
